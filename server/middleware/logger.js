@@ -47,4 +47,4 @@ const createLogger = async (app) => {
   });
 }
 
-exports.createLogger = createLogger
+module.exports.createLogger = createLogger

@@ -12,8 +12,10 @@ provider:
     NODE_ENV: production
     STAGE: v1
 
-# package:
-#   individually: true
+package:
+  individually: true
+  include:
+    - ./public/**
 
 functions:
   api:
@@ -43,10 +45,11 @@ custom:
   #     #- sh server/hooks/create-introspection-cache.sh
 
   webpack:
-    webpackConfig: ./webpack.config.js
+    webpackConfig: ./webpack.serverless.js
     includeModules:
       forceInclude:
         - pg
+        - ./public/**
       forceExclude:
         - mssql
         - mysql
