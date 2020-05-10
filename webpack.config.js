@@ -22,7 +22,7 @@ const slsw = require('serverless-webpack');
 // Convenience Utils
 // ******************************
 
-const env = process.env.NODE_ENV || 'development'
+const env = process.env.NODE_ENV || 'production'
 const isProduction = env === 'production'
 
 // ******************************

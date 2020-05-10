@@ -11,7 +11,7 @@ const snakeCaseAll = require("lodash/snakeCase");
 
 const PgSimplifyInflectorPlugin = require("@graphile-contrib/pg-simplify-inflector");
 const ConnectionFilterPlugin = require("postgraphile-plugin-connection-filter");
-const PostGISPlugin = require("@graphile/postgis");
+//const PostGISPlugin = require("@graphile/postgis");
 const PgSnakeCasePlugin = makeAddInflectorsPlugin({
   camelCase: formatInsideUnderscores(snakeCaseAll),
 }, true);
@@ -23,7 +23,8 @@ let path = '/'
 
 const createPostgraphile = (app) =>{
   let config = {
-    appendPlugins: [PgSnakeCasePlugin,PgSimplifyInflectorPlugin, ConnectionFilterPlugin,  PostGISPlugin.default || PostGISPlugin],    
+    //appendPlugins: [PgSnakeCasePlugin,PgSimplifyInflectorPlugin, ConnectionFilterPlugin,  PostGISPlugin.default || PostGISPlugin],
+    appendPlugins: [PgSnakeCasePlugin, PgSimplifyInflectorPlugin, ConnectionFilterPlugin],    
     watchPg: db.watchPg,
     graphiql: true,
     enhanceGraphiql: true,
@@ -33,6 +34,8 @@ const createPostgraphile = (app) =>{
     pgDefaultRole: db.default_role,
     dynamicJson: true
   }
+
+  //console.log('createPostgraphile', connection, db.schema, config)
   if(process.env._HANDLER){
     config.externalUrlBase = `/${process.env.stage}`
   } else {
