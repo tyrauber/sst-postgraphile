@@ -1,0 +1,58 @@
+service: cms
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  region: ${opt:region, self:custom.default.region}
+  stage: ${opt:stage, env:STAGE, self:custom.default.stage}
+  timeout: 300
+  memorySize: 3008
+  versionFunctions: true
+  environment:
+    NODE_ENV: production
+    STAGE: v1
+
+package:
+  individually: true
+
+functions:
+  api:
+    handler: service/handler.handler
+    events:
+      - http:
+          path: /
+          method: POST
+      - http: ANY /
+      - http: ANY /{proxy+}
+
+plugins:
+ # - serverless-hooks-plugin
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  default:
+    region: eu-central-1
+    stage: v1
+
+  # hooks:
+  #   before:package:createDeploymentArtifacts:
+  #     - npm run build
+  #     #- sh server/hooks/create-introspection-cache.sh
+
+  webpack:
+    webpackConfig: ./webpack.default.js
+    includeModules:
+      forceInclude:
+        - pg
+      forceExclude:
+        - mssql
+        - mysql
+        - mysql2
+        - sqlite3
+
+  prune:
+    automatic: true
+    number: 3
