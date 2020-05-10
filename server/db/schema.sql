@@ -168,3 +168,46 @@ GRANT EXECUTE ON FUNCTION me() TO member;
 CREATE POLICY select_user ON USERS using (id = current_setting('jwt.claims.user_id')::uuid);
 CREATE POLICY update_user on users FOR UPDATE to member using (id = nullif(current_setting('jwt.claims.user_id', true), '')::uuid);
 CREATE POLICY delete_user on users FOR DELETE to member using (id = nullif(current_setting('jwt.claims.user_id', true), '')::uuid);
+
+CREATE TABLE app.stats (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc(),
+  sub VARCHAR(255),
+  host VARCHAR(255) NOT NULL,
+  status INTEGER NOT NULL DEFAULT 200,
+  method VARCHAR(6) NOT NULL DEFAULT 'GET',
+  type VARCHAR(255) NOT NULL,
+  path text NOT NULL,
+  query text,
+  rt INTEGER NOT NULL,
+  kb FLOAT NOT NULL,
+  message text,
+  ip cidr NOT NULL,
+  ref TEXT,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE app.components (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc(),
+  name CHARACTER VARYING(255) NOT NULL UNIQUE,
+  path text NOT NULL,
+  template text NOT NULL,
+  meta jsonb DEFAULT '{}',
+  components jsonb DEFAULT '{}',
+  props jsonb DEFAULT '{}',
+  data jsonb DEFAULT '{}',
+  computed jsonb DEFAULT '{}',
+  styles jsonb DEFAULT '{}',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+
+CREATE OR REPLACE FUNCTION INSERT_COMPONENT(name TEXT, path TEXT, template TEXT) RETURNS SETOF app.components AS
+$$
+BEGIN
+  RETURN QUERY
+  INSERT INTO app.components (name, path, template) VALUES ($1, $2, $3)
+   RETURNING *;
+END;
+$$ LANGUAGE PLPGSQL VOLATILE STRICT SECURITY DEFINER;
