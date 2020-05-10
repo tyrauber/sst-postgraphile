@@ -18,9 +18,8 @@ const PgSnakeCasePlugin = makeAddInflectorsPlugin({
 
 const knex = require('../db')
 const db = knex.client.config
+const connection = knex.client.connectionSettings
 let path = '/'
-
-//console.log(db)
 
 const createPostgraphile = (app) =>{
   let config = {
@@ -40,7 +39,7 @@ const createPostgraphile = (app) =>{
     path = `/${process.env.stage}`
   }
   console.log(path)
-  app.use(mount(path, postgraphile(db.connection, db.schema, config)));
+  app.use(mount(path, postgraphile(connection, db.schema, config)));
 }
 
 module.exports.createPostgraphile = createPostgraphile;
