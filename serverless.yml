@@ -12,12 +12,12 @@ provider:
     NODE_ENV: production
     STAGE: v1
 
-package:
-  individually: true
+# package:
+#   individually: true
 
 functions:
   api:
-    handler: service/handler.handler
+    handler: handler.handler
     events:
       - http:
           path: /
@@ -43,7 +43,7 @@ custom:
   #     #- sh server/hooks/create-introspection-cache.sh
 
   webpack:
-    webpackConfig: ./webpack.default.js
+    webpackConfig: ./webpack.config.js
     includeModules:
       forceInclude:
         - pg

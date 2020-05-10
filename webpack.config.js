@@ -22,8 +22,10 @@ const slsw = require('serverless-webpack');
 // Convenience Utils
 // ******************************
 
-const env = process.env.NODE_ENV
+const env = process.env.NODE_ENV || 'development'
 const isProduction = env === 'production'
+
+console.log("env", env, isProduction)
 
 // ******************************
 // Base Webpack Configuration
@@ -45,8 +47,8 @@ const base = {
   //mode: slsw.lib.webpack.isLocal ? 'development': 'production',
   entry: {
     //web: Path.resolve(__dirname, './app/config/entry-web.js'),
-    server: Path.resolve(__dirname, './app/config/entry-server.js'),
-    handler: Path.resolve(__dirname, './server/handler.js'),
+    //server: Path.resolve(__dirname, './app/config/entry-server.js'),
+    handler: Path.resolve(__dirname, './handler.js'),
   },
   module: {
     rules: [
@@ -94,6 +96,7 @@ const base = {
   output: {
     libraryTarget: 'commonjs2',
     path: Path.join(__dirname, './public'),
+    publicPath: '/public/',
     filename: '[name].js',
     sourceMapFilename: '[file].map'
   },
@@ -161,3 +164,5 @@ const base = {
 //     new Dotenv()
 //   ]
 // })
+
+module.exports = base
