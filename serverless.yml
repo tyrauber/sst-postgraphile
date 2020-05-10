@@ -4,18 +4,18 @@ provider:
   name: aws
   runtime: nodejs10.x
   region: ${opt:region, self:custom.default.region}
-  stage: ${opt:stage, env:STAGE, self:custom.default.stage}
-  timeout: 300
-  memorySize: 3008
+  stage: ${opt:stage, env:STAGE, env:stage, self:custom.default.stage}
+  timeout: 30
+  memorySize: 512
   versionFunctions: true
   environment:
     NODE_ENV: production
     STAGE: v1
 
-package:
-  individually: true
-  include:
-    - ./public/**
+# package:
+#   individually: true
+#   include:
+#     - ./public/**
 
 functions:
   api:
@@ -28,7 +28,10 @@ functions:
       - http: ANY /{proxy+}
 
 plugins:
- # - serverless-hooks-plugin
+  # - serverless-hooks-plugin
+  #- serverless-domain-manager
+  #- serverless-apigw-binary
+  - serverless-s3-sync
   - serverless-prune-plugin
   - serverless-dotenv-plugin
   - serverless-offline
@@ -38,6 +41,26 @@ custom:
   default:
     region: eu-central-1
     stage: v1
+  # apigwBinary:
+  #   types:
+  #     - image/png
+  #     - image/*
+  #     - '*/*'
+  s3Sync:
+    # A simple configuration for copying static assets
+    - bucketName: '${env:S3_BUCKET}' # required
+      bucketPrefix: '${env:STAGE}/' # optional
+      localDir: public # required
+
+  # customDomain:
+  #   domainName: '${env:DOMAIN}'
+  #   basePath: ''
+  #   certificateName: '*.${env:DOMAIN}'
+  #   stage: ${env:STAGE, opt:stage, self:custom.default.stage}
+  #   createRoute53Record: true
+  #   endpointType: 'regional'
+  #   securityPolicy: tls_1_2
+  #   apiType: rest
 
   # hooks:
   #   before:package:createDeploymentArtifacts:
@@ -49,12 +72,31 @@ custom:
     includeModules:
       forceInclude:
         - pg
-        - ./public/**
+        - deepmerge
+        - vuex-persistedstate
+        - isomorphic-fetch
+        - vue
+        - vue-router
+        - vuex
+        - vue-meta
+        - secure-ls
       forceExclude:
         - mssql
         - mysql
         - mysql2
         - sqlite3
+        - clean-webpack-plugin
+        - copy-webpack-plugin
+        - dotenv-webpack
+        - html-webpack-plugin
+        - koa-webpack-hot-middleware
+        - mini-css-extract-plugin
+        - optimize-css-assets-webpack-plugin
+        - terser-webpack-plugin
+        - vue-loader
+        - webpack
+        - webpack-merge
+        - webpack-node-externals
 
   prune:
     automatic: true

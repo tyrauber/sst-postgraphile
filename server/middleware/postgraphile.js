@@ -36,11 +36,12 @@ const createPostgraphile = async (app) =>{
   }
 
   if(process.env._HANDLER){
-    config.externalUrlBase = `/${process.env.stage}`
+    config.externalUrlBase = `/${process.env.STAGE}`
+    app.use(postgraphile(connection, db.schema, config));
   } else {
-    path = `/${process.env.stage}`
-  }
-  app.use(mount(path, postgraphile(connection, db.schema, config)));
+    path = `/${process.env.STAGE}`
+    app.use(mount(path, postgraphile(connection, db.schema, config)));
+  } 
 }
 
 module.exports.createPostgraphile = createPostgraphile;

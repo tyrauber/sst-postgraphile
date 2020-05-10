@@ -16,8 +16,9 @@ const Graphql = store => {
     if(token){
       headers['AUTHORIZATION'] = `BEARER ${token}`;
     }
-    console.log("fetch", `${process.env.HOST}/graphql`, query, token)
-    return await fetch(`${process.env.HOST}/graphql`, {
+    let path = `${process.env.HOST}/${process.env.STAGE}/graphql`
+    console.log("fetch", path, query, token)
+    return await fetch(path, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({"query": query.query, "variables": query.variables||{}}),

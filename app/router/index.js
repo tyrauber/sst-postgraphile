@@ -12,33 +12,35 @@ const checkAdminRights = (to, from, next) => {
   console.log('checkAdminRights', store.state.user)
   //next({ path: to.path });      
 }
+const isProduction = (process.env._HANDLER || process.env.NODE_ENV === 'production')
+const path = isProduction ? `/${process.env.STAGE}` : ''
 
 const routes = [
   {
-    path: "/",
+    path: `${path}/`,
     name: "Home",
     component: Home
   },
   {
-    path: "/admin",
+    path: `${path}/admin`,
     name: "Admin",
     component: Admin,
     meta: { requiresAdmin: true }
   },
   {
-    path: "/signup",
+    path: `${path}/signup`,
     name: "Signup",
     component: () =>
       import("@/components/Signup.vue")
   },
   {
-    path: "/signin",
+    path: `${path}/signin`,
     name: "Signin",
     component: () =>
       import("@/components/Signin.vue")
   },
   {
-    path: "/settings",
+    path: `${path}/settings`,
     name: "Settings",
     component: () =>
       import("@/components/Settings.vue")

@@ -31,7 +31,6 @@ const isProduction = env === 'production'
 // Base Webpack Configuration
 // ******************************
 
-
 const base = {
   mode: isProduction ? 'production' : 'development',
   module: {
@@ -58,7 +57,7 @@ const base = {
       options: {
         name: '[name].[hash:8].[ext]',
         outputPath: './fonts/',
-        publicPath: '/dist/fonts/',
+        publicPath: `${process.env.CDN}/${process.env.STAGE}/fonts/`,
         esModule: false
       }
     },
@@ -68,15 +67,15 @@ const base = {
       options: {
         name: '[name].[hash:8].[ext]',
         outputPath: './images/',
-        publicPath: '/dist/images/',
+        publicPath: `${process.env.CDN}/${process.env.STAGE}/images/`,
         esModule: false
       }
     },
     ]
   },
   output: {
-    path: Path.resolve(__dirname, './public/dist'),
-    publicPath: '/dist/',
+    path: Path.resolve(__dirname, './public/'),
+    publicPath: `${process.env.CDN}/${process.env.STAGE}/`,
     filename: "[name].[hash:8].js"
   },
   plugins: [
@@ -86,8 +85,8 @@ const base = {
       // both options are optional
       filename: !isProduction ? '[name].css' : '[name].[hash:8].css',
       chunkFilename: !isProduction ? '[id].css' : '[id].[hash:8].css',
-      path: Path.resolve(__dirname, './public/dist'),
-      publicPath: '/public/dist'
+      path: Path.resolve(__dirname, './public/'),
+      publicPath: `${process.env.CDN}/${process.env.STAGE}/`
     }),
   ],
   resolve: {
@@ -130,13 +129,17 @@ const server =  WebpackMerge(base, {
     whitelist: ['isomorphic-fetch', 'vue', 'vue-router', 'vuex', 'vue-meta']
   }),
   output: {
-    path: Path.resolve(__dirname, './public/dist'),
-    publicPath: '/public/dist',
+    path: Path.resolve(__dirname, './public'),
+    publicPath: `${process.env.CDN}/${process.env.STAGE}/public`,
     libraryTarget: 'commonjs2'
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new VueSSRServerPlugin(),
-    new Dotenv()
+    new Dotenv(),
+    new CopyPlugin([
+      { from: 'app/templates' }
+    ])
   ]
 })
 
@@ -172,9 +175,10 @@ const serverless =  WebpackMerge(base, {
   },
   plugins: [
     new CopyPlugin([
-      { from: 'public', to: 'public' },
-      { from: 'app/templates', to: 'app/templates' },
-      { from: 'package.json' }
+      { from: 'public/vue-ssr-client-manifest.json' },
+      { from: 'public/vue-ssr-server-bundle.json' },
+      { from: 'public/index.template.html' }
+      //{ from: 'public', to: 'public' }
     ])
   ]
 })
