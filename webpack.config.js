@@ -27,9 +27,14 @@ const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
 const env = process.env.NODE_ENV
 const isProduction = env === 'production'
 
+let publicPath = !!(isProduction && process.env.CDN && process.env.STAGE)
+ ? `${process.env.CDN}/${process.env.STAGE}` : `/public/${process.env.STAGE}`
+
 // ******************************
 // Base Webpack Configuration
 // ******************************
+
+console.log("publicPath", publicPath)
 
 const base = {
   mode: isProduction ? 'production' : 'development',
@@ -57,7 +62,7 @@ const base = {
       options: {
         name: '[name].[hash:8].[ext]',
         outputPath: './fonts/',
-        publicPath: `${process.env.CDN}/${process.env.STAGE}/fonts/`,
+        publicPath: `${publicPath}/fonts/`,
         esModule: false
       }
     },
@@ -67,7 +72,7 @@ const base = {
       options: {
         name: '[name].[hash:8].[ext]',
         outputPath: './images/',
-        publicPath: `${process.env.CDN}/${process.env.STAGE}/images/`,
+        publicPath: `${publicPath}/images/`,
         esModule: false
       }
     },
@@ -75,7 +80,7 @@ const base = {
   },
   output: {
     path: Path.resolve(__dirname, './public/'),
-    publicPath: `${process.env.CDN}/${process.env.STAGE}/`,
+    publicPath: `${publicPath}/`,
     filename: "[name].[hash:8].js"
   },
   plugins: [
@@ -86,7 +91,7 @@ const base = {
       filename: !isProduction ? '[name].css' : '[name].[hash:8].css',
       chunkFilename: !isProduction ? '[id].css' : '[id].[hash:8].css',
       path: Path.resolve(__dirname, './public/'),
-      publicPath: `${process.env.CDN}/${process.env.STAGE}/`
+      publicPath: `${publicPath}/`
     }),
   ],
   resolve: {
@@ -130,7 +135,7 @@ const server =  WebpackMerge(base, {
   }),
   output: {
     path: Path.resolve(__dirname, './public'),
-    publicPath: `${process.env.CDN}/${process.env.STAGE}/public`,
+    publicPath: `${publicPath}/public`,
     libraryTarget: 'commonjs2'
   },
   plugins: [
@@ -175,9 +180,9 @@ const serverless =  WebpackMerge(base, {
   },
   plugins: [
     new CopyPlugin([
-      { from: 'public/vue-ssr-client-manifest.json' },
-      { from: 'public/vue-ssr-server-bundle.json' },
-      { from: 'public/index.template.html' }
+      { from: './public/vue-ssr-client-manifest.json' },
+      { from: './public/vue-ssr-server-bundle.json' },
+      { from: './public/index.template.html' }
       //{ from: 'public', to: 'public' }
     ])
   ]

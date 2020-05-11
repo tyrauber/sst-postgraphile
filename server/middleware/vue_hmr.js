@@ -7,14 +7,8 @@ const fs = require('fs')
 
 const VueServerRenderer = require('vue-server-renderer')
 
-const isProduction = process.env.NODE_ENV === 'production'
 
-const readFile = (path) =>{
-  path = (process.env._HANDLER ?  path : Path.resolve(__dirname, `../.${path}`))
-  return fs.readFileSync(path, 'utf-8')
-}
-
-const createVueSSR = async (app) =>{
+const createVueHMR = async (app) =>{
   
   const router = new Router();
   let renderer = null
@@ -23,27 +17,26 @@ const createVueSSR = async (app) =>{
   // Renderer Generator
   //******************************
 
-  const generateRenderer = () => {
+  const generateRenderer = (fs) => {
     if (!fs) fs = require('fs')
 
-    const serverBundle = readFile('./public/dist/vue-ssr-server-bundle.json')
-    const clientBundle= readFile('./public/dist/vue-ssr-client-manifest.json')
-    const template = readFile('./app/templates/index.template.html')
+    const serverBundlePath = Path.resolve(__dirname, '../../public/vue-ssr-server-bundle.json')
+    const clientBundlePath = Path.resolve(__dirname, '../../public/vue-ssr-client-manifest.json')
+    const templatePath = Path.resolve(__dirname, '../../app/templates/index.template.html')
 
     return VueServerRenderer.createBundleRenderer(
-      JSON.parse(serverBundle),
+      JSON.parse(fs.readFileSync(serverBundlePath, 'utf-8')),
       {
-        clientManifest: JSON.parse(clientBundle),
+        clientManifest: JSON.parse(fs.readFileSync(clientBundlePath, 'utf-8')),
+        // Always read the HTML template from the filesystem.
         runInNewContext: false,
         inject: false,
-        template: template
+        template: require('fs').readFileSync(templatePath, 'utf-8')
       }
     )
   }
 
-  if (isProduction || process.env._HANDLER) {
-    renderer = generateRenderer()
-  } else if (process.env.NODE_ENV != 'test') {
+  if (process.env.NODE_ENV != 'test') {
     const Webpack = require('webpack')
     const WebpackDevMiddleware = require("koa-webpack-dev-middleware");
     const WebpackHotMiddleware = require("koa-webpack-hot-middleware");
@@ -98,8 +91,8 @@ const createVueSSR = async (app) =>{
   //******************************
 
   app.use(mount(
-    (process.env._HANDLER ? `/${process.env.stage}/dist/` : '/dist/'), 
-    serve("./public/dist")
+    (process.env._HANDLER ? `/${process.env.stage}/public/` : '/public/'), 
+    serve("./public/")
   ));
 
   //******************************
@@ -135,4 +128,4 @@ const createVueSSR = async (app) =>{
     .use(router.allowedMethods());
 }
 
-module.exports.createVueSSR = createVueSSR
+module.exports.createVueHMR = createVueHMR

@@ -2,9 +2,10 @@ const Koa = require('koa');
 const route = require('koa-route');
 const cors = require('@koa/cors');
 
-const { createLogger } = require('./middleware/logger')
-const { createPostgraphile } = require('./middleware/postgraphile')
-const { createVueSSR } = require('./middleware/vue_ssr')
+const { createLogger } = require('./middleware/logger');
+const { createPostgraphile } = require('./middleware/postgraphile');
+const { createVueSSR } = require('./middleware/vue_ssr');
+const { createVueHMR } = require('./middleware/vue_hmr');
 
 const isProduction = (process.env._HANDLER || process.env.NODE_ENV === 'production')
 
@@ -17,6 +18,8 @@ createPostgraphile(app);
 
 if (isProduction) {
   createVueSSR(app);
+} else {
+  createVueHMR(app);
 }
 
 // app.use(route.get('/', (ctx,nxt) => {

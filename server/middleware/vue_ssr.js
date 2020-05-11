@@ -10,7 +10,9 @@ const VueServerRenderer = require('vue-server-renderer')
 const isProduction = process.env.NODE_ENV === 'production'
 
 const readFile = (path) =>{
-  path = (process.env._HANDLER ? path : Path.resolve(__dirname, `./public/${path}`))
+  path = isProduction ? path : `./public/${path}`
+  path = process.env._HANDLER ? path : Path.resolve(__dirname, `./public/${path}`)
+  console.log("readFile", path)
   return fs.readFileSync(path, 'utf-8')
 }
 
@@ -43,14 +45,15 @@ const createVueSSR = async (app) =>{
 
   renderer = generateRenderer()
 
+
   //******************************
   // Static Resource Serving
   //******************************
 
-  // app.use(mount(
-  //   (isProduction ? `/public/` : `/${process.env.stage}/public/`), 
-  //   serve("./public/")
-  // ));
+  /* if serverless offline, mount and serve public directory */
+  if(!isProduction){
+    app.use(mount('/public/v1/', serve("./public/")));
+  }
 
 
   //******************************
