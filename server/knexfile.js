@@ -1,4 +1,3 @@
-require('dotenv').config();
 const path = require('path')
 
 let config = {
@@ -40,7 +39,7 @@ module.exports = {
       password: 'postgres'
     }
   }),
-  production: Object.assign({...config}, { 
+  production: Object.assign({...config}, {
     connection: process.env.DATABASE_URL
   })
 }

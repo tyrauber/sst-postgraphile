@@ -22,6 +22,7 @@ const connection = knex.client.connectionSettings
 let path = '/'
 
 const createPostgraphile = async (app) =>{
+
   let config = {
     //appendPlugins: [PgSnakeCasePlugin,PgSimplifyInflectorPlugin, ConnectionFilterPlugin,  PostGISPlugin.default || PostGISPlugin],
     appendPlugins: [PgSnakeCasePlugin, PgSimplifyInflectorPlugin, ConnectionFilterPlugin],    
@@ -34,14 +35,15 @@ const createPostgraphile = async (app) =>{
     pgDefaultRole: db.default_role,
     dynamicJson: true
   }
-
-  if(process.env._HANDLER){
-    config.externalUrlBase = `/${process.env.STAGE}`
-    app.use(postgraphile(connection, db.schema, config));
-  } else {
-    path = `/${process.env.STAGE}`
-    app.use(mount(path, postgraphile(connection, db.schema, config)));
-  } 
+  // if(process.env._HANDLER){
+  //   //config.externalUrlBase = `/${process.env.STAGE}`
+  //   app.use(postgraphile(connection, db.schema, config));
+  // } else {
+  //   path = `/${process.env.STAGE}`
+  //   app.use(mount(path, postgraphile(connection, db.schema, config)));
+  // }
+  app.use(postgraphile(connection, db.schema, config));
+  return app;
 }
 
 module.exports.createPostgraphile = createPostgraphile;

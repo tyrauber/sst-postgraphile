@@ -22,7 +22,7 @@ const createVueHMR = async (app) =>{
 
     const serverBundlePath = Path.resolve(__dirname, '../../public/vue-ssr-server-bundle.json')
     const clientBundlePath = Path.resolve(__dirname, '../../public/vue-ssr-client-manifest.json')
-    const templatePath = Path.resolve(__dirname, '../../app/templates/index.template.html')
+    const templatePath = Path.resolve(__dirname, '../../app/index.html')
 
     return VueServerRenderer.createBundleRenderer(
       JSON.parse(fs.readFileSync(serverBundlePath, 'utf-8')),

@@ -2,9 +2,6 @@
 // Dependencies
 // ******************************
 
-const Dotenv = require('dotenv-webpack');
-require('dotenv').config()
-
 const Path = require('path')
 
 const TerserJSPlugin = require('terser-webpack-plugin');
@@ -24,58 +21,73 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
 const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
 
-const env = process.env.NODE_ENV
-const isProduction = env === 'production'
+const slsw = require('serverless-webpack');
+const env = slsw.lib.serverless ? slsw.lib.serverless.service.provider.environment : {}
 
-let publicPath = !!(isProduction && process.env.CDN && process.env.STAGE)
- ? `${process.env.CDN}/${process.env.STAGE}` : `/public/${process.env.STAGE}`
+const isProduction = process.env.NODE_ENV === 'production'
+
+// let publicPath = !!(isProduction && env.CDN)
+//  ? `${env.CDN}/${env.STAGE}` : `/public`
+
+let publicPath = `/public`
 
 // ******************************
 // Base Webpack Configuration
 // ******************************
 
-console.log("publicPath", publicPath)
-
 const base = {
   mode: isProduction ? 'production' : 'development',
   module: {
-    rules: [{
-      test: /\.vue$/,
-      loader: 'vue-loader'
-    },
-    {
-        test: /\.(sa|sc|c)ss$/,
-        use: isProduction ? [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },'css-loader','sass-loader',
-        ]: [
-          'vue-style-loader','css-loader','sass-loader',
-       ],
-    },
-    {
-      test: /\.(eot|woff|woff2|ttf)(\?.*)?$/,
-      loader: 'file-loader',
-      options: {
-        name: '[name].[hash:8].[ext]',
-        outputPath: './fonts/',
-        publicPath: `${publicPath}/fonts/`,
-        esModule: false
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+        options: {
+          minimize: false
+        }
+      },
+      {
+          test: /\.(sa|sc|c)ss$/,
+          use: isProduction ? [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: process.env.NODE_ENV === 'development',
+              },
+            },'css-loader','sass-loader',
+          ]: [
+            'vue-style-loader','css-loader','sass-loader',
+         ],
+      },
+      {
+        test: /\.(eot|woff|woff2|ttf)(\?.*)?$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[hash:8].[ext]',
+          outputPath: './fonts/',
+          publicPath: `${publicPath}/fonts/`,
+          esModule: false
+        }
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[hash:8].[ext]',
+          outputPath: './images/',
+          publicPath: `${publicPath}/images/`,
+          esModule: false
+        }
+      },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader'
       }
-    },
-    {
-      test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-      loader: 'file-loader',
-      options: {
-        name: '[name].[hash:8].[ext]',
-        outputPath: './images/',
-        publicPath: `${publicPath}/images/`,
-        esModule: false
-      }
-    },
     ]
   },
   output: {
@@ -97,9 +109,10 @@ const base = {
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      "@": Path.resolve(__dirname, './app')
+      '@': Path.resolve(__dirname, './app'),
+      '#': Path.resolve(__dirname, './server')
     },
-    extensions: ['.js', '.vue']
+    extensions: ['.js', '.vue', '.gql']
   }
 }
 
@@ -113,7 +126,6 @@ const web = WebpackMerge(base, {
   entry: ['@/config/entry-web.js'],
   plugins: [
     new VueSSRClientPlugin(),
-    new Dotenv()
   ]
 })
 
@@ -141,15 +153,18 @@ const server =  WebpackMerge(base, {
   plugins: [
     new CleanWebpackPlugin(),
     new VueSSRServerPlugin(),
-    new Dotenv(),
     new CopyPlugin([
-      { from: 'app/templates' }
+      { from: 'app/index.html', to: 'index.html' }
     ])
   ]
 })
 
 const serverless =  WebpackMerge(base, {
   target: 'node',
+  node: {
+    __dirname: true,
+  },
+  mode: 'production',
   entry: {
     handler: Path.resolve(__dirname, './handler.js'),
   },
@@ -180,10 +195,12 @@ const serverless =  WebpackMerge(base, {
   },
   plugins: [
     new CopyPlugin([
-      { from: './public/vue-ssr-client-manifest.json' },
-      { from: './public/vue-ssr-server-bundle.json' },
-      { from: './public/index.template.html' }
-      //{ from: 'public', to: 'public' }
+      { from: './app/assets/images/logo.png', to: './favicon.ico' },
+      { from: './public' }
+
+      // { from: './public/vue-ssr-client-manifest.json' },
+      // { from: './public/vue-ssr-server-bundle.json' },
+      // { from: './public/index.html' }
     ])
   ]
 })

@@ -1,6 +1,10 @@
 //require('es6-promise').polyfill();
 import fetch from 'isomorphic-fetch'
 
+const HOST = () => {
+  return !!(typeof window !== 'undefined') ? window.location.origin : process.env.HOST
+}
+
 const Graphql = store => {
 
   store.subscribe((mutation, state) => {
@@ -16,7 +20,7 @@ const Graphql = store => {
     if(token){
       headers['AUTHORIZATION'] = `BEARER ${token}`;
     }
-    let path = `${process.env.HOST}/${process.env.STAGE}/graphql`
+    let path = `${HOST()}/graphql`
     console.log("fetch", path, query, token)
     return await fetch(path, {
       method: 'POST',

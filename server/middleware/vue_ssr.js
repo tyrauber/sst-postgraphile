@@ -10,9 +10,10 @@ const VueServerRenderer = require('vue-server-renderer')
 const isProduction = process.env.NODE_ENV === 'production'
 
 const readFile = (path) =>{
-  path = isProduction ? path : `./public/${path}`
-  path = process.env._HANDLER ? path : Path.resolve(__dirname, `./public/${path}`)
-  console.log("readFile", path)
+  //path = isProduction ? path : `./public/${path}`
+  //path = process.env._HANDLER ? path : Path.resolve(__dirname, `./${process.env.STAGE}/${path}`)
+
+  path = Path.resolve(__dirname, `../../${path}`)
   return fs.readFileSync(path, 'utf-8')
 }
 
@@ -28,14 +29,14 @@ const createVueSSR = async (app) =>{
   const generateRenderer = () => {
     if (!fs) fs = require('fs')
 
-    const serverBundle = readFile('vue-ssr-server-bundle.json')
-    const clientBundle= readFile('vue-ssr-client-manifest.json')
-    const template = readFile('index.template.html')
+    const serverBundle = require('../../public/vue-ssr-server-bundle.json')
+    const clientBundle= require('../../public/vue-ssr-client-manifest.json')
+    const template = require('../../public/index.html')
 
     return VueServerRenderer.createBundleRenderer(
-      JSON.parse(serverBundle),
+      serverBundle,
       {
-        clientManifest: JSON.parse(clientBundle),
+        clientManifest: clientBundle,
         runInNewContext: false,
         inject: false,
         template: template
@@ -50,17 +51,85 @@ const createVueSSR = async (app) =>{
   // Static Resource Serving
   //******************************
 
-  /* if serverless offline, mount and serve public directory */
-  if(!isProduction){
-    app.use(mount('/public/v1/', serve("./public/")));
-  }
+  // const getOriginalImage =  async (key="") => {
 
+  // }
+
+  // if(!isProduction){
+  //   app.use(mount(`/public`, serve("./public/")));
+  // } else {
+
+
+    const AWS = require('aws-sdk');
+    const s3 = new AWS.S3();
+
+    // function getObject (bucket, objectKey) {
+    //   // try {
+    //   //   const params = {
+    //   //     Bucket: bucket,
+    //   //     Key: objectKey 
+    //   //   }
+    //   //   console.log('s3', params)
+    //   //   const data = await s3.getObject(params).promise();
+    //   //   return data.Body.toString('utf-8');
+    //   // } catch (e) {
+    //   //   console.log("err", e)
+    //   //   throw new Error(`Could not retrieve file from S3: ${e.message}`)
+    //   // }
+    //    return new Promise((resolve,reject)=>{
+    //   return s3
+    //   .getObject({ Bucket: bucket, Key: objectKey })
+    //   .createReadStream()
+    //   .on('data', (data)=> {
+    //     return data.toString()
+    //   })
+    //   .on('error', err => {
+    //     console.log('stream error', err);
+    //   })
+    //   .on('finish', () => {
+    //     console.log('stream finish');
+    //   })
+    //   .on('close', () => {
+    //     console.log('stream close');
+    //   })
+    // }
+
+    function getObject(bucket, objectKey){
+      return new Promise((resolve,reject)=>{
+        console.log("Asset", { Bucket: bucket, Key: objectKey })
+        let stream =  s3
+        .getObject({ Bucket: bucket, Key: objectKey })
+        .createReadStream()
+        let data
+        stream.on("error",err=>reject(err))
+        stream.on("data",chunk=>data+=chunk)
+        stream.on("end",()=>resolve(data))
+      })
+    }
+
+    router.get(`(/public.*)`, async (ctx, next) =>{
+      console.log('asset', ctx.request.url)
+      const key = ctx.request.url.replace(/^\//,'')
+      const bucket = process.env.S3_BUCKET
+      //const resp = getObject(bucket, key)
+      // const type = key.match(/(png|jpg|jpeg|webp|tiff)$/)[0]
+      // if (type){
+      //   // console.log("content_type", 'image/png')
+      //   ctx.type = `image/png`;
+      //   console.log("content_type", type)
+      // }
+      // //
+      //ctx.body = resp;
+      ctx.body = await getObject(bucket, key)
+      next();
+    })
+  //}
 
   //******************************
   // Catch-all Route
   //******************************
 
-  router.get('(.*|/)', async (ctx, ctxnext) =>{
+  router.get('(.*|/[^])', async (ctx, ctxnext) =>{
 
     // In development, the renderer might take a second to generate.
     if (!renderer) {

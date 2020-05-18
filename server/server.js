@@ -1,6 +1,9 @@
 const Koa = require('koa');
 const route = require('koa-route');
 const cors = require('@koa/cors');
+const serve =  require('koa-static');
+const mount = require('koa-mount');
+const Path = require('path')
 
 const { createLogger } = require('./middleware/logger');
 const { createPostgraphile } = require('./middleware/postgraphile');
@@ -22,9 +25,14 @@ if (isProduction) {
   createVueHMR(app);
 }
 
-// app.use(route.get('/', (ctx,nxt) => {
-//   ctx.body = "Hello World"
-// }));
-//console.log('stage', process.env.stage)
+// const dir = Path.resolve(__dirname, './public')
+// console.log(dir)
 
+
+// app.use(async (ctx, next) => {
+//   await next();
+//   ctx.body = 'Hello World';
+// });
+
+//app.use(serve(dir))
 module.exports = app;
