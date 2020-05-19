@@ -1,0 +1,24 @@
+mutation update_user($input: UpdateUserInput!) {
+  update_user(input: $input) {
+    user {id, email, role, aws_bucket_name, aws_region_name}
+  }
+}
+
+# {
+# @api {patch} /api/user/_id Update User
+# @apiGroup User
+# @apiName Update User
+# @apiDescription A patch request to /api/users/_id with a valid JWT Token Bearer Authorization header updates the user based on the arributes provided.
+# 
+# @apiHeader {String} Authorization Users unique jwt access token.
+# @apiHeaderExample {json} Request-Example: { "Authorization": "BEARER SUPER-SECRET-JWT-AUTHORIZATION-TOKEN" }
+#
+# @apiParam {String} email Users email.
+# @apiParam {String} password Users password.
+# 
+# @apiSuccess {UUID} me[id] User ID.
+# @apiSuccess {String} me[email] User Email.
+# @apiSuccess {String} me[role] User Role.
+# @apiSuccess {String} me[aws_bucket_name] User AWS Bucket Name.
+# @apiSuccess {String} me[aws_region_name] User AWS Region Name.
+# }

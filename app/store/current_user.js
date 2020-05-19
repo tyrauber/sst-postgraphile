@@ -1,4 +1,19 @@
 import Vue from 'vue'
+import UserSignup from '#/api/users/post_signup.gql'
+import UserSignin from '#/api/users/post_signin.gql'
+import UserMe from '#/api/users/get_me.gql'
+import UserUpdate from '#/api/users/_id/patch.gql'
+import UserDestroy from '#/api/users/_id/delete.gql'
+
+const format = (query, variables) =>{
+  return {
+    query: query.loc.source.body,
+    variables: {
+      input: variables
+    }
+  }
+}
+
 
 export default {
   namespaced: 'current_user',
@@ -15,45 +30,7 @@ export default {
     jwt_token: (state) =>{
       return state.jwt_token;
     },
-    signin: () => {
-      return  (attributes) => {
-        return { query: `mutation signin($input: SigninInput!) {
-          signin(input: $input) {
-            jwt_token
-          }}`, variables: { input: attributes }
-        }
-      }
-    },
-    signup: () => {
-      return (attributes) => { 
-        return { query: `mutation signup($input: SignupInput!) {
-          signup(input: $input) {
-            jwt_token
-          }}`, variables: { input: attributes }
-        }
-      }
-    },
-    me: () => {
-      return {query: `{ me { id email role } }`}
-    },
-    update: () => {
-      return (id, attributes) => {
-        return { query: `mutation update_user($input: UpdateUserInput!) {
-          update_user(input: $input) {
-            user {email, role}
-          }}`, variables: { input: { id: id, patch: attributes } }
-        }
-      }
-    },
-    delete: () => {
-      return (id) => {
-        return { query: `mutation delete_user($input: DeleteUserInput!) {
-          delete_user(input: $input) {
-            user { id }
-          }}`, variables: {input: { id: id } }
-        }
-      }
-    },
+
     all: () => {
       return (params) => {
         console.log(params)
@@ -100,7 +77,7 @@ export default {
     },
 
     async me ({ commit, getters }) {
-      return await this.graphql(getters.me,
+      return await this.graphql(format(UserMe, {}),
         (res) =>{
           return commit('update', res.data.me);
         }
@@ -108,7 +85,7 @@ export default {
     },
 
     async signin ({ commit, dispatch, getters }, { email, password }) {
-      return await this.graphql(getters.signin({email: email, password: password }), 
+      return await this.graphql(format(UserSignin, { email: email, password: password }),
         (res) =>{
           commit('update', { jwt_token: res.data.signin.jwt_token });
           return dispatch('me')
@@ -118,7 +95,7 @@ export default {
     },
 
     async signup ({ commit, dispatch, getters}, { email, password }) {
-      return await this.graphql(getters.signup({email: email, password: password }),
+      return await this.graphql(format(UserSignup, { email: email, password: password }),
         (res) =>{
           commit('update', {jwt_token: res.data.signup.jwt_token });
           return dispatch('me')
@@ -127,15 +104,15 @@ export default {
     },
 
     async update ({ commit, getters }, { id, attributes = {} }) {
-      return await this.graphql(getters.update(id, attributes),
+      return await this.graphql(format(UserUpdate, { id: id, patch: attributes }),
         (res) =>{
-          commit('update', res);
+          commit('update', res.data.update_user.user);
         }
       )
     },
 
     async delete({ commit, dispatch, getters }, { id }) {
-      return await this.graphql(getters.delete(id),
+      return await this.graphql(format(UserDestroy, { id: id }),
         (res) =>{
           dispatch('signout')
         }

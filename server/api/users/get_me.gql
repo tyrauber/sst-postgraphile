@@ -1,0 +1,19 @@
+query me {
+  me { 
+    id email role aws_bucket_name aws_region_name
+  }
+}
+
+# {
+# @api {get} /api/users/me Me
+# @apiName Me
+# @apiDescription A get request with a valid JWT Token Bearer Authorization header retrieves the current user details.
+# @apiGroup User
+# @apiHeader {String} Authorization Users unique jwt access token.
+# @apiHeaderExample {json} Request-Example: { "Authorization": "BEARER SUPER-SECRET-JWT-AUTHORIZATION-TOKEN" }
+#
+# @apiSuccess {Object} me Me Result.
+# @apiSuccess {UUID} me[id] User ID.
+# @apiSuccess {String} me[email] User Email.
+# @apiSuccess {String} me[role] User Role.
+# }

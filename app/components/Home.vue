@@ -31,8 +31,8 @@ export default {
   components: {
     
   },
-  mounted(){
-    console.log(this.$store.state.current_user.jwt_token)
-  }
+  // mounted(){
+  //   console.log(this.$store.state.current_user.jwt_token)
+  // }
 };
 </script>
