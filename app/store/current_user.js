@@ -21,6 +21,8 @@ export default {
     id: null,
     email: null,
     role: null,
+    aws_bucket_name: null,
+    aws_region_name: null,
     jwt_token: null,
     users: [],
     totalCount: 0,
@@ -56,12 +58,21 @@ export default {
     update (state, options){
       //console.log("UPDATE", options, state)
       for (let key in options) { 
+        console.log("update", key, options[key])
         Vue.set(state, key, options[key])
       }
     },
   },
 
   actions: {
+    async upload ({ commit, getters }, {params}) {
+      return await this.fetch('POST', '/api/upload', params,
+        (res) => {
+          return res.url;
+        }
+      );
+    },
+
 
     async all ({ commit, getters }, {params}) {
       console.log("action all", params)

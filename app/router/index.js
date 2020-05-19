@@ -6,20 +6,27 @@ const store = createStore()
 Vue.use(Router)
 
 import Home from "@/components/Home.vue";
+import Upload from "@/components/Upload.vue";
 import Admin from "@/components/Admin.vue";
 
 const checkAdminRights = (to, from, next) => {
   console.log('checkAdminRights', store.state.user)
   //next({ path: to.path });      
 }
-const isProduction = (process.env._HANDLER || process.env.NODE_ENV === 'production')
-const path = isProduction ? `/${process.env.STAGE}` : ''
+// const isProduction = (process.env._HANDLER || process.env.NODE_ENV === 'production')
+// const path = isProduction ? `/${process.env.STAGE}` : ''
+const path = '';
 
 const routes = [
   {
     path: `${path}/`,
     name: "Home",
     component: Home
+  },
+  {
+    path: `${path}/upload`,
+    name: "Upload",
+    component: Upload
   },
   {
     path: `${path}/admin`,

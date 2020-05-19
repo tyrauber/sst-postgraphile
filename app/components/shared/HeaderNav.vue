@@ -14,7 +14,8 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons  has-addons">
-            <router-link :to="{name: 'Admin'}" v-if="loggedIn" class="button">Admin</router-link>
+            <!-- <router-link :to="{name: 'Admin'}" v-if="loggedIn" class="button">Admin</router-link> -->
+            <router-link :to="{name: 'Upload'}" v-if="loggedIn" class="button">Upload</router-link>
             <router-link :to="{name: 'Settings'}" v-if="loggedIn" class="button">Settings</router-link>
             <a @click="logout" v-if="loggedIn" class="button">Logout</a>
             <template v-else>

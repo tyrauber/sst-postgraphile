@@ -13,6 +13,28 @@
 			    </span>
 			  </p>
 			</div>
+      <hr/>
+      <h2>AWS (Amazon Web Services) S3 Bucket</h2>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="password" placeholder="AWS Access Key ID" v-model="aws_access_key_id">
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="password" placeholder="AWS Secret Access Key" v-model="aws_secret_access_key">
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="text" placeholder="AWS Bucket Name" v-model="aws_bucket_name">
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="tet" placeholder="AWS Region" v-model="aws_region_name">
+        </p>
+      </div>
 			<hr/>
 			<h2>Change Password</h2>
 			<div class="field">
@@ -48,11 +70,18 @@ export default {
       email: '',
     	password: '',
     	passwordConfirmation: '',
+      aws_access_key_id: '',
+      aws_secret_access_key: '',
+      aws_bucket_name: '',
+      aws_region_name: ''
     }
   },
   beforeMount: function() {
+    console.log(this.$store.state.current_user)
     this.id = this.$store.state.current_user.id
     this.email = this.$store.state.current_user.email
+    this.aws_bucket_name = this.$store.state.current_user.aws_bucket_name
+    this.aws_region_name = this.$store.state.current_user.aws_region_name
 
   },
   methods: {
@@ -61,6 +90,12 @@ export default {
       let attributes = { email: this.email }
       if((this.password) && (this.password == this.passwordConfirmation)){
         attributes.password = this.password
+      }
+      if(this.aws_access_key_id && this.aws_secret_access_key && this.aws_bucket_name && this.aws_region_name){
+        attributes.aws_access_key_id  = this.aws_access_key_id
+        attributes.aws_secret_access_key  = this.aws_secret_access_key
+        attributes.aws_bucket_name  = this.aws_bucket_name
+        attributes.aws_region_name  = this.aws_region_name
       }
       await this.$store.dispatch("current_user/update", { id: this.id, attributes })
     },

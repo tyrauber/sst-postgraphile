@@ -80,6 +80,10 @@ CREATE TABLE app.users (
   email text NOT NULL UNIQUE,
   password text NOT NULL,
   role text default 'member',
+  aws_access_key_id VARCHAR(63),
+  aws_secret_access_key VARCHAR(63),
+  aws_bucket_name VARCHAR(63),
+  aws_region_name VARCHAR(12),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -94,8 +98,8 @@ $$ language sql stable;
 
 -- Create me() function to 
 
-CREATE OR REPLACE FUNCTION me(OUT id uuid, OUT email text, OUT role text) returns RECORD as $$
-  SELECT id,email, role FROM app.users WHERE id = nullif(current_setting('jwt.claims.user_id', true), '')::uuid;
+CREATE OR REPLACE FUNCTION me(OUT id uuid, OUT email text, OUT role text, OUT aws_bucket_name TEXT, OUT aws_region_name TEXT) returns RECORD as $$
+  SELECT id,email, role, aws_bucket_name, aws_region_name FROM app.users WHERE id = nullif(current_setting('jwt.claims.user_id', true), '')::uuid;
 $$ language sql stable;
 
 CREATE OR REPLACE FUNCTION SIGNUP(email TEXT, password TEXT) RETURNS app.jwt_token AS

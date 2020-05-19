@@ -12,7 +12,36 @@ const Graphql = store => {
 
   store.subscribeAction((action, state) => {
   })
+  store.fetch = async (method='get', path='/', payload={}, success, failure) => {
+    let headers = { 'Content-Type': 'application/json' }
+    let token = store.getters['current_user/jwt_token'];
+    if(token){
+      headers['AUTHORIZATION'] = `BEARER ${token}`;
+    }
+    path = `${HOST()}${path}`
+    //console.log("fetch", method, path, payload, token)
+    return await fetch(path, {
+      method: method,
+      headers: headers,
+      body: JSON.stringify(payload),
+    })
+    .then(res => {
+      //console.log("Res", res)
+      return res.json();
+    })
 
+    .then(res => {
+      if(res.errors){
+        if(failure)
+          failure(res)
+        throw res.errors.map(e => e.message ).join(",")
+      }
+      if(success){
+        success(res);
+      }
+      return res
+    })
+  }
   store.graphql = async (query, success, failure) => {
 
     let headers = { 'Content-Type': 'application/json' }
