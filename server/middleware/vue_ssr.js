@@ -46,84 +46,37 @@ const createVueSSR = async (app) =>{
 
   renderer = generateRenderer()
 
-
   //******************************
   // Static Resource Serving
   //******************************
 
-  // const getOriginalImage =  async (key="") => {
+  const AWS = require('aws-sdk');
+  const s3 = new AWS.S3();
 
-  // }
-
-  // if(!isProduction){
-  //   app.use(mount(`/public`, serve("./public/")));
-  // } else {
-
-
-    const AWS = require('aws-sdk');
-    const s3 = new AWS.S3();
-
-    // function getObject (bucket, objectKey) {
-    //   // try {
-    //   //   const params = {
-    //   //     Bucket: bucket,
-    //   //     Key: objectKey 
-    //   //   }
-    //   //   console.log('s3', params)
-    //   //   const data = await s3.getObject(params).promise();
-    //   //   return data.Body.toString('utf-8');
-    //   // } catch (e) {
-    //   //   console.log("err", e)
-    //   //   throw new Error(`Could not retrieve file from S3: ${e.message}`)
-    //   // }
-    //    return new Promise((resolve,reject)=>{
-    //   return s3
-    //   .getObject({ Bucket: bucket, Key: objectKey })
-    //   .createReadStream()
-    //   .on('data', (data)=> {
-    //     return data.toString()
-    //   })
-    //   .on('error', err => {
-    //     console.log('stream error', err);
-    //   })
-    //   .on('finish', () => {
-    //     console.log('stream finish');
-    //   })
-    //   .on('close', () => {
-    //     console.log('stream close');
-    //   })
-    // }
-
-    function getObject(bucket, objectKey){
-      return new Promise((resolve,reject)=>{
-        console.log("Asset", { Bucket: bucket, Key: objectKey })
-        let stream =  s3
-        .getObject({ Bucket: bucket, Key: objectKey })
-        .createReadStream()
-        let data
-        stream.on("error",err=>reject(err))
-        stream.on("data",chunk=>data+=chunk)
-        stream.on("end",()=>resolve(data))
-      })
-    }
-
-    router.get(`(/public.*)`, async (ctx, next) =>{
-      console.log('asset', ctx.request.url)
-      const key = ctx.request.url.replace(/^\//,'')
-      const bucket = process.env.S3_BUCKET
-      //const resp = getObject(bucket, key)
-      // const type = key.match(/(png|jpg|jpeg|webp|tiff)$/)[0]
-      // if (type){
-      //   // console.log("content_type", 'image/png')
-      //   ctx.type = `image/png`;
-      //   console.log("content_type", type)
-      // }
-      // //
-      //ctx.body = resp;
-      ctx.body = await getObject(bucket, key)
-      next();
+  function getObject(bucket, objectKey){
+    return new Promise((resolve,reject)=>{
+      console.log("Asset", { Bucket: bucket, Key: objectKey })
+      let stream =  s3
+      .getObject({ Bucket: bucket, Key: objectKey })
+      .createReadStream()
+      let data = ''
+      stream.on("error",err=>reject(err))
+      stream.on("data",chunk=>data+=chunk)
+      stream.on("end",()=>resolve(data))
     })
-  //}
+  }
+
+  router.get(`(/public.*)`, async (ctx, next) =>{
+    // console.log('asset', ctx.request.url)
+    const key = ctx.request.url.replace(/^\//,'')
+    const bucket = process.env.S3_BUCKET
+    const type = key.match(/(png|jpg|jpeg|webp|tiff)$/)
+    if (!!(type)){
+      ctx.type = `image/${type[0]}`;
+    }
+    ctx.body = await getObject(bucket, key)
+    next();
+  })
 
   //******************************
   // Catch-all Route
