@@ -2,21 +2,23 @@
   "name": "sst-postgraphile",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "sst dev",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "schema": "npx ts-node --require esm -e \"import { schema } from './packages/functions/src/graphql'; schema();\""
   },
   "devDependencies": {
-    "sst": "^2.8.23",
+    "@tsconfig/node16": "^1.0.4",
     "aws-cdk-lib": "2.72.1",
     "constructs": "10.1.156",
-    "typescript": "^5.0.4",
-    "@tsconfig/node16": "^1.0.4"
+    "esm": "^3.2.25",
+    "sst": "^2.8.23",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   },
   "workspaces": [
     "packages/*"

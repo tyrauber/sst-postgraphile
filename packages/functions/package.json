@@ -1,7 +1,6 @@
 {
   "name": "@sst-postgraphile/functions",
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "test": "sst bind vitest",
     "typecheck": "tsc -noEmit"
@@ -13,9 +12,12 @@
     "vitest": "^0.31.0"
   },
   "dependencies": {
+    "@types/pg": "^8.6.6",
     "aws-serverless-express": "^3.4.0",
     "cors": "^2.8.5",
+    "esm": "^3.2.25",
     "express": "^4.18.2",
+    "graphql": "^16.6.0",
     "pg": "^8.11.0",
     "postgraphile": "^4.13.0"
   }
