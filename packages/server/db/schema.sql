@@ -2,35 +2,35 @@
 
 -- DOWN MIGRATION
 
-REVOKE ALL PRIVILEGES ON FUNCTION app.SIGNUP(email TEXT, password TEXT) FROM guest;
-REVOKE ALL PRIVILEGES ON FUNCTION app.SIGNIN(email TEXT, password TEXT) FROM guest;
-REVOKE ALL PRIVILEGES ON FUNCTION app.current_user_id FROM member;
-REVOKE ALL PRIVILEGES ON FUNCTION app.me FROM member;
+-- REVOKE ALL PRIVILEGES ON FUNCTION app.SIGNUP(email TEXT, password TEXT) FROM guest;
+-- REVOKE ALL PRIVILEGES ON FUNCTION app.SIGNIN(email TEXT, password TEXT) FROM guest;
+-- REVOKE ALL PRIVILEGES ON FUNCTION app.current_user_id FROM member;
+-- REVOKE ALL PRIVILEGES ON FUNCTION app.me FROM member;
 
-DROP POLICY IF EXISTS delete_user ON app.users;
-DROP POLICY IF EXISTS update_user ON app.users;
-DROP POLICY IF EXISTS select_user ON app.users;
+-- DROP POLICY IF EXISTS delete_user ON app.users;
+-- DROP POLICY IF EXISTS update_user ON app.users;
+-- DROP POLICY IF EXISTS select_user ON app.users;
 
-DROP TRIGGER IF EXISTS updatePassword ON app.users;
+-- DROP TRIGGER IF EXISTS updatePassword ON app.users;
 
-DROP FUNCTION IF EXISTS CREATE_ROLE(rolename TEXT);
-DROP FUNCTION IF EXISTS current_user_id();
-DROP FUNCTION IF EXISTS me(OUT id uuid, OUT email text, OUT role text);
-DROP FUNCTION IF EXISTS SIGNUP(email TEXT, password TEXT);
-DROP FUNCTION IF EXISTS SIGNIN(email TEXT, password TEXT);
-DROP FUNCTION IF EXISTS app.updatePassword() CASCADE;
+-- DROP FUNCTION IF EXISTS CREATE_ROLE(rolename TEXT);
+-- DROP FUNCTION IF EXISTS current_user_id();
+-- DROP FUNCTION IF EXISTS me(OUT id uuid, OUT email text, OUT role text);
+-- DROP FUNCTION IF EXISTS SIGNUP(email TEXT, password TEXT);
+-- DROP FUNCTION IF EXISTS SIGNIN(email TEXT, password TEXT);
+-- DROP FUNCTION IF EXISTS app.updatePassword() CASCADE;
 
-REVOKE ALL ON app.users FROM member;
-REVOKE ALL PRIVILEGES ON app.users FROM admin;
-REVOKE ALL PRIVILEGES ON app.users FROM member;
-REVOKE ALL PRIVILEGES ON app.users FROM guest;
+-- REVOKE ALL ON app.users FROM member;
+-- REVOKE ALL PRIVILEGES ON app.users FROM admin;
+-- REVOKE ALL PRIVILEGES ON app.users FROM member;
+-- REVOKE ALL PRIVILEGES ON app.users FROM guest;
 
-DROP TYPE app.jwt_token CASCADE;
+-- DROP TYPE app.jwt_token CASCADE;
 
-DROP TABLE IF EXISTS app.users;
+-- DROP TABLE IF EXISTS app.users;
 
-DROP EXTENSION IF EXISTS pgcrypto;
-DROP EXTENSION IF EXISTS "uuid-ossp";
+-- DROP EXTENSION IF EXISTS pgcrypto;
+-- DROP EXTENSION IF EXISTS "uuid-ossp";
 
 -- UP MIGRATION
 
