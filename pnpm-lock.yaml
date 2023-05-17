@@ -39,7 +39,7 @@ importers:
       cors: ^2.8.5
       esm: ^3.2.25
       express: ^4.18.2
-      graphql: ^16.6.0
+      graphql: 15.8.0
       pg: ^8.11.0
       postgraphile: ^4.13.0
       sst: ^2.8.23
@@ -50,7 +50,7 @@ importers:
       cors: 2.8.5
       esm: 3.2.25
       express: 4.18.2
-      graphql: 16.6.0
+      graphql: 15.8.0
       pg: 8.11.0
       postgraphile: 4.13.0
     devDependencies:
@@ -3948,6 +3948,7 @@ packages:
   /graphql/16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+    dev: true
 
   /has-flag/3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
