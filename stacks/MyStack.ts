@@ -13,6 +13,11 @@ export function API({ stack }: StackContext) {
               JWT_IDENTIFIER: process.env.JWT_IDENTIFIER,
               JWT_SECRET: process.env.JWT_SECRET
             },
+            nodejs:{
+              loader: {
+                ".graphql": "text"
+              }
+            }
         }
     },
     },

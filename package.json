@@ -9,12 +9,14 @@
     "remove": "sst remove",
     "console": "sst console",
     "typecheck": "tsc --noEmit",
-    "schema": "npx ts-node --require esm -e \"import { schema } from './packages/functions/src/graphql'; schema();\""
+    "schema": "npx ts-node --require esm -e \"import { exportSchema } from './packages/functions/src/graphql'; exportSchema();\"",
+    "postgraphile": "npx postgraphile"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.4",
     "aws-cdk-lib": "2.72.1",
     "constructs": "10.1.156",
+    "dotenv": "^16.0.3",
     "esm": "^3.2.25",
     "sst": "^2.8.23",
     "ts-node": "^10.9.1",
@@ -22,5 +24,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "postgraphile": "^4.13.0"
+  }
 }
