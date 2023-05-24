@@ -1,6 +1,6 @@
 mutation userSignin($input: SigninInput!) {
   signin(input: $input) {
-    jwt_token
+    jwtToken
   }
 }
 # @restql { "filter": "data.signin" }
@@ -14,5 +14,5 @@ mutation userSignin($input: SigninInput!) {
 # @apiParam {String} password Users password.
 # 
 # @apiSuccess {Object} signup Signin Result.
-# @apiSuccess {String} jwt_token JWT Token.
+# @apiSuccess {String} jwtToken JWT Token.
 # }

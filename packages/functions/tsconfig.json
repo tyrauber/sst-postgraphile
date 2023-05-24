@@ -5,6 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "@sst-postgraphile/core/*": ["../core/src/*"]
-    }
-  }
+    },
+    "noImplicitAny": false
+  },
+  "include": ["**/*.tsx", "**/*.js", "**/*.jsx", "**/*.d.ts", "src/.postgraphilerc.js", "src/express.ts"]
 }
