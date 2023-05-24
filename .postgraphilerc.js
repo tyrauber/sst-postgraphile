@@ -9,10 +9,8 @@ const options = {
   defaultRole: process.env.DEFAULT_ROLE,
   jwtPgTypeIdentifier: process.env.JWT_IDENTIFIER,
   jwtTokenIdentifier: process.env.JWT_IDENTIFIER,
-  graphiql: true,
-  //watch: true,
+  graphiql: '/graphiql',
   enhanceGraphiql: true,
-  //retryOnInitFail: true,
   dynamicJson: true,
   cors: true
 }

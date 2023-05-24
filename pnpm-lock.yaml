@@ -4119,7 +4119,7 @@ packages:
       react: '>=18.0.0'
     dependencies:
       cli-spinners: 2.9.0
-      ink: 4.2.0_react@18.2.0
+      ink: 4.2.0_oxnxxw5cisuxfd3tsgnto6yp4e
       react: 18.2.0
     dev: true
 

@@ -14,6 +14,8 @@ app.use(
     options.schema,
     { ...options,
       readCache: `${__dirname}postgraphile.cache`,
+      graphiql: true,
+      graphiqlRoute: '/graphiql',
     }
   )
 );
