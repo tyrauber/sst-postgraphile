@@ -22,7 +22,7 @@ export async function performQuery(
     query: string,
     variables: Maybe<{ [key: string]: any; }>,
     jwtToken: string,
-    operationName: string
+    operationName?: string
 ) {
   return await withPostGraphileContext(
     {
