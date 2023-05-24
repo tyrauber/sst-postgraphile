@@ -49,10 +49,12 @@ export async function performQuery(
 }
 
 export const schema = async () => {
-    await exportPostGraphileSchema(await createPostGraphileSchema(pool, options.schema, options), {
+    const graphQLSchema = await createPostGraphileSchema(pool, options.schema, options);
+    await exportPostGraphileSchema(graphQLSchema, {
         ...options,
         exportGqlSchemaPath: __dirname + '/schema.graphql',
+        writeCache: `${__dirname}/postgraphile.cache`,
     });
     console.log(`PostGraphile schema exported to ${__dirname}/schema.graphql`);
-    process.exit(0)
+    return
 }

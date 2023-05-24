@@ -15,6 +15,6 @@ cdk.context.json
 /.idea
 
 # local env files
-.env
+.env.local
 .env*.local
 .envrc
