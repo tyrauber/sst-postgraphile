@@ -46,13 +46,9 @@ export async function performQuery(
     }
   );
 }
-
-export const handler = ApiHandler(async (_evt) => {
-
-})
-
-export const exportSchema = async () => {
-    await exportPostGraphileSchema(await createPostGraphileSchema(pool, options.schema, options), {
+export const schema = async () => {
+    const graphQLSchema = await createPostGraphileSchema(pool, options.schema, options);
+    await exportPostGraphileSchema(graphQLSchema, {
         ...options,
         exportGqlSchemaPath: __dirname + '/schema.graphql',
         writeCache: `${__dirname}/postgraphile.cache`,
