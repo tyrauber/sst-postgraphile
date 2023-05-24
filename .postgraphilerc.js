@@ -1,4 +1,6 @@
-require('dotenv').config({path: `${__dirname}/.env.local`})
+try{
+  require('dotenv').config({path: `${__dirname}/.env.local`})
+} catch(e){}
 const options = {
   port: 3000,
   connection: process.env.DATABASE_URL,
