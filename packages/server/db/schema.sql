@@ -75,7 +75,7 @@ END $$;
 
 -- Create the users table.
 
-CREATE TABLE app.users (
+CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc(),
   email text NOT NULL UNIQUE,
   password text NOT NULL,

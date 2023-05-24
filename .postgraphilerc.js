@@ -1,23 +1,19 @@
-require('dotenv').config({path: '.env.local'})
-
+require('dotenv').config({path: `${__dirname}/.env.local`})
 const options = {
   port: 3000,
   connection: process.env.DATABASE_URL,
-  schema: ['public', process.env.SCHEMA],
+  schema: ['public', 'app'],
   jwtSecret: process.env.JWT_SECRET,
   defaultRole: process.env.DEFAULT_ROLE,
+  jwtPgTypeIdentifier: process.env.JWT_IDENTIFIER,
   jwtTokenIdentifier: process.env.JWT_IDENTIFIER,
-  watch: true,
+  graphiql: true,
+  //watch: true,
   enhanceGraphiql: true,
-  retryOnInitFail: true,
+  //retryOnInitFail: true,
   dynamicJson: true,
-  disableQueryLog: false,
-  writeCache: "./postgraphile.cache",
-  showErrorStack: true,
   cors: true
 }
-
-console.log({options})
 module.exports = {
   options
 };

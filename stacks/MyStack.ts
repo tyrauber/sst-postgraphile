@@ -3,10 +3,10 @@ import { StackContext, Api } from "sst/constructs";
 export function API({ stack }: StackContext) {
   const api = new Api(stack, "api", {
     routes: {
-      "GET /": "packages/functions/src/lambda.handler",
+      // "GET /": "packages/functions/src/lambda.handler",
       "GET /{proxy+}": {
         function: {
-            handler: "packages/functions/src/graphql.handler",
+            handler: "packages/functions/src/postgraphile.handler",
             environment: {
               DATABASE_URL: process.env.DATABASE_URL,
               DEFAULT_ROLE: process.env.DEFAULT_ROLE,
@@ -15,9 +15,14 @@ export function API({ stack }: StackContext) {
             },
             nodejs:{
               loader: {
-                ".graphql": "text"
+                ".graphql": "text",
+                ".cache": "text"
               }
-            }
+            },
+            copyFiles: [
+              {"from": "./packages/functions/src/postgraphile.cache", "to": "packages/functions/src/postgraphile.cache"},
+              {"from": "./.postgraphilerc.js", "to": "packages/functions/src/.postgraphilerc.js"},
+            ]
         }
     },
     },

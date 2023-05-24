@@ -1,5 +1,11 @@
+import { ApiHandler } from "sst/node/api";
 import { Pool } from 'pg';
-import { graphql, GraphQLSchema } from 'graphql';
+import { graphql, GraphQLSchema, buildSchema } from 'graphql';
+
+
+// import Cache from `${__dirname}/postgraphile.cache`;
+
+import { options } from '.postgraphilerc.js';
 
 import { withPostGraphileContext, createPostGraphileSchema } from 'postgraphile'
 import exportPostGraphileSchema from 'postgraphile/build/postgraphile/schema/exportPostGraphileSchema'
@@ -7,14 +13,7 @@ import exportPostGraphileSchema from 'postgraphile/build/postgraphile/schema/exp
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 })
-const options = {
-    connection: process.env.DATABASE_URL,
-    schema: [process.env.SCHEMA || "public"],
-    jwtSecret: process.env.DEFAULT_ROLE  || "SUPER_SECRET_JWT_SECRET",
-    defaultRole:  process.env.DEFAULT_ROLE  || "guest",
-    jwtTokenIdentifier: process.env.JWT_IDENTIFIER || "app.jwt_token",
-    watch: false,
-}
+
 
 type Maybe<T> = T | null | undefined;
 
@@ -48,11 +47,15 @@ export async function performQuery(
   );
 }
 
-export const schema = async () => {
+export const handler = ApiHandler(async (_evt) => {
+
+})
+
+export const exportSchema = async () => {
     await exportPostGraphileSchema(await createPostGraphileSchema(pool, options.schema, options), {
         ...options,
         exportGqlSchemaPath: __dirname + '/schema.graphql',
+        writeCache: `${__dirname}/postgraphile.cache`,
     });
-    console.log(`PostGraphile schema exported to ${__dirname}/schema.graphql`);
     process.exit(0)
 }

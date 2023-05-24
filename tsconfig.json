@@ -1,4 +1,6 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
-  "exclude": ["packages"]
+  "exclude": ["packages"],
+  "resolveJsonModule": true,
+  "noImplicitAny": false
 }
