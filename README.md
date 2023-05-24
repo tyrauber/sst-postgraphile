@@ -25,3 +25,5 @@ You can use `/graphiql` or `/graphql`.
 
 You can also test postgraphile with the same configuration by running:
 `pnpm postgraphile`
+
+This example uses a [modified verison](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/server/db/schema.sql) of the [postgraphile forum example](https://github.com/graphile/postgraphile/blob/main/examples/forum/TUTORIAL.md).
