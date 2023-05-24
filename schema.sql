@@ -46,18 +46,22 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" schema public;
 -- Create 3 users roles = guest, member and admin.
 -- We are going to use roles to grant or restrict access to all users of a role.
 
-CREATE OR REPLACE FUNCTION CREATE_ROLE(rolename TEXT) RETURNS void AS
-$$
-BEGIN
-  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE  rolname =  rolename) 
-    THEN CREATE ROLE rolename WITH NOLOGIN;
-  END IF;
-END
-$$ LANGUAGE plpgsql;
+CREATE ROLE guest WITH NOLOGIN;
+CREATE ROLE member WITH NOLOGIN;
+CREATE ROLE admin WITH NOLOGIN;
 
-SELECT CREATE_ROLE('guest');
-SELECT CREATE_ROLE('member');
-SELECT CREATE_ROLE('admin');
+-- CREATE OR REPLACE FUNCTION CREATE_ROLE(rolename TEXT) RETURNS void AS
+-- $$
+-- BEGIN
+--   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE  rolname =  rolename) 
+--     THEN CREATE ROLE rolename WITH NOLOGIN;
+--   END IF;
+-- END
+-- $$ LANGUAGE plpgsql;
+
+-- SELECT CREATE_ROLE('guest');
+-- SELECT CREATE_ROLE('member');
+-- SELECT CREATE_ROLE('admin');
 
 -- Create a jwt_token type containing the user role and user_id
 
