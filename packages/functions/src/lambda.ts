@@ -13,12 +13,19 @@ pool.on('error', error => {
 })
 
 const options = {
+    port: 3000,
     connection: process.env.DATABASE_URL,
-    schema: [process.env.SCHEMA || "public"],
-    jwtSecret: process.env.DEFAULT_ROLE  || "SUPER_SECRET_JWT_SECRET",
-    defaultRole:  process.env.DEFAULT_ROLE  || "guest",
-    jwtTokenIdentifier: process.env.JWT_IDENTIFIER || "app.jwt_token",
-    watch: false,
+    schema: ['public', 'app'],
+    jwtSecret: process.env.JWT_SECRET,
+    defaultRole: process.env.DEFAULT_ROLE,
+    jwtPgTypeIdentifier: process.env.JWT_IDENTIFIER,
+    jwtTokenIdentifier: process.env.JWT_IDENTIFIER,
+    graphiql: true,
+    //watch: true,
+    enhanceGraphiql: true,
+    //retryOnInitFail: true,
+    dynamicJson: true,
+    cors: true
 }
 const postgraphileSchemaPromise =  createPostGraphileSchema(pool, options.schema);
 
@@ -50,9 +57,6 @@ export const handler = ApiHandler(async (_evt) => {
     const jwtToken = authorizationHeader.substring(7, authorizationHeader.length);
     console.log('Query:', reqBody.query)
     console.log('Variables:', reqBody.variables)
-
-
-    console.log(printSchema(postgraphileSchema));
 
     const result = await performQuery(postgraphileSchema, reqBody.query, reqBody.variables, jwtToken);
     console.log('Result:', result)
