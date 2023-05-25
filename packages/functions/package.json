@@ -15,7 +15,7 @@
     "@types/pg": "^8.6.6",
     "cors": "^2.8.5",
     "esm": "^3.2.25",
-    "graphql": "^16.6.0",
+    "graphql": "15.8.0",
     "pg": "^8.11.0",
     "postgraphile": "^4.13.0",
     "serverless-http": "^3.2.0"
