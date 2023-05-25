@@ -1,6 +1,6 @@
 // This script is called from scripts/generate-cache
 const { createPostGraphileSchema } = require('postgraphile');
-const { options } = require(`${__dirname}/.postgraphilerc`);
+const { options } = require(`${__dirname}/../../../.postgraphilerc`);
 const { Pool } = require('pg');
 
 async function main() {
