@@ -1,8 +1,7 @@
 import {ApiHandler} from "sst/node/api";
-import {performQuery} from "./graphql";
 import {Pool} from "pg";
-import {createPostGraphileSchema} from "postgraphile";
-import {GraphQLSchema, printSchema} from "graphql";
+import {createPostGraphileSchema, withPostGraphileContext} from "postgraphile";
+import {graphql, GraphQLSchema, printSchema} from "graphql";
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -12,21 +11,7 @@ pool.on('error', error => {
     console.error('Postgres generated pool error!', error)
 })
 
-const options = {
-    port: 3000,
-    connection: process.env.DATABASE_URL,
-    schema: ['public', 'app'],
-    jwtSecret: process.env.JWT_SECRET,
-    defaultRole: process.env.DEFAULT_ROLE,
-    jwtPgTypeIdentifier: process.env.JWT_IDENTIFIER,
-    jwtTokenIdentifier: process.env.JWT_IDENTIFIER,
-    graphiql: true,
-    //watch: true,
-    enhanceGraphiql: true,
-    //retryOnInitFail: true,
-    dynamicJson: true,
-    cors: true
-}
+const { options } = require(`${__dirname}./.postgraphilerc`);
 
 const getPostGraphileSchemaPromise = (): Promise<GraphQLSchema> => {
     console.log("Getting new promise for schema");
@@ -34,6 +19,38 @@ const getPostGraphileSchemaPromise = (): Promise<GraphQLSchema> => {
 };
 
 const postgraphileSchemaPromise =  await getPostGraphileSchemaPromise();
+
+type Maybe<T> = T | null | undefined;
+
+export async function performQuery(
+    schema: GraphQLSchema,
+    query: string,
+    variables: Maybe<{ [key: string]: any; }>,
+    jwtToken: string,
+    operationName?: string
+) {
+  return await withPostGraphileContext(
+    {
+      pgPool: pool,
+      jwtToken: jwtToken,
+      jwtSecret: process.env.JWT_SECRET,
+      pgDefaultRole: process.env.DEFAULT_ROLE
+    },
+    async context => {
+      // Execute your GraphQL query in this function with the provided
+      // `context` object, which should NOT be used outside of this
+      // function.
+      return await graphql(
+        schema, // The schema from `createPostGraphileSchema`
+        query,
+        null,
+        { ...context }, // You can add more to context if you like
+        variables,
+        operationName
+      );
+    }
+  );
+}
 
 export const handler = ApiHandler(async (_evt) => {
     if(!_evt.body){
