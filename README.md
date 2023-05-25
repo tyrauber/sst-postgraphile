@@ -37,10 +37,10 @@ There are three different implementations of Postgraphile in this repo. All use 
 ```pnpm postgraphile```
 - [Library](https://www.graphile.org/postgraphile/usage-library/)
 ```pnpm run deploy --stage dev```
-- [Schema Only](https://www.graphile.org/postgraphile/usage-schema/)
+- [Schema-Only](https://www.graphile.org/postgraphile/usage-schema/)
 ```pnpm run deploy --stage dev```
 
-The Schema Only implementation, ([packages/functions/src/postgraphile_lambda.ts](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_lambda.ts)) is designed for performance, and is accessible at the root api endpoint `/`.
+The Schema-Only implementation, ([packages/functions/src/postgraphile_lambda.ts](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_lambda.ts)) is designed for performance, and is accessible at the root api endpoint `/`.
 
 The Library Implmentation, ([packages/functions/src/postgraphile_library.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_library.js)), is meant to privide full library functionality including GraphiQL. The graphql endpoint is available at`/graphql` and the GraphiQL endpoint at `/graphiql`.
 
@@ -51,4 +51,5 @@ This example uses a [modified verison](https://github.com/tyrauber/sst-postgraph
 - [.postgraphilerc.js](https://github.com/tyrauber/sst-postgraphile/blob/main/.postgraphilerc.js) postgraphile config
 - [/stacks/MyStack.ts](https://github.com/tyrauber/sst-postgraphile/blob/main/stacks/MyStack.ts) SST Stack config
 - [/packages/functions/src/makeCache.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/makeCache.js) generates the cache
-- [/packages/functions/src/postgraphile.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile.js)  Express Postgraphile Library Lambda
+- [packages/functions/src/postgraphile_library.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_library.js)  Postgraphile Library Lambda
+- [packages/functions/src/postgraphile_lambda.ts](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_lambda.ts)  Postgraphile Schema-Only Lambda
