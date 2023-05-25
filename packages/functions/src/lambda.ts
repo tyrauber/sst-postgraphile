@@ -27,7 +27,13 @@ const options = {
     dynamicJson: true,
     cors: true
 }
-const postgraphileSchemaPromise =  createPostGraphileSchema(pool, options.schema);
+
+const getPostGraphileSchemaPromise = (): Promise<GraphQLSchema> => {
+    console.log("Getting new promise for schema");
+    return createPostGraphileSchema(pool, options.schema);
+};
+
+const postgraphileSchemaPromise =  await getPostGraphileSchemaPromise();
 
 export const handler = ApiHandler(async (_evt) => {
     if(!_evt.body){
@@ -47,18 +53,27 @@ export const handler = ApiHandler(async (_evt) => {
     let postgraphileSchema: GraphQLSchema;
 
     console.log('Awaiting schema')
+    const startSchemaPromise = new Date().getTime();
     try {
-        postgraphileSchema = await postgraphileSchemaPromise
+        postgraphileSchema = postgraphileSchemaPromise;
     } catch (error) {
-        console.error('Rebuilding schema after connection loss')
-        postgraphileSchema = await createPostGraphileSchema(pool, options.schema, options);
+        console.error('Rebuilding schema after connection loss');
+        postgraphileSchema = await getPostGraphileSchemaPromise();
     }
+    const endSchemaPromise = new Date().getTime();
+    console.log(`load schema time: ${ endSchemaPromise - startSchemaPromise}ms`);
 
     const jwtToken = authorizationHeader.substring(7, authorizationHeader.length);
     console.log('Query:', reqBody.query)
     console.log('Variables:', reqBody.variables)
 
+    const performQueryStart = new Date().getTime();
+
     const result = await performQuery(postgraphileSchema, reqBody.query, reqBody.variables, jwtToken);
+    const performQueryEnd = new Date().getTime();
+
+    console.log(`Perform query execution time: ${ performQueryEnd - performQueryStart}ms`);
+
     console.log('Result:', result)
 
     return {
