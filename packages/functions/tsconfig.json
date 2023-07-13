@@ -8,5 +8,5 @@
     },
     "noImplicitAny": false
   },
-  "include": ["**/*.tsx", "**/*.js", "**/*.jsx", "**/*.d.ts", "src/.postgraphilerc.js", "src/express.ts"]
+  "include": ["**/*.tsx", "**/*.js", "**/*.jsx", "**/*.d.ts", "src/.postgraphilerc.js", "src/express.ts", "src/postgraphile_library.ts"]
 }

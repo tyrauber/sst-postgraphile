@@ -53,3 +53,55 @@ This example uses a [modified verison](https://github.com/tyrauber/sst-postgraph
 - [/packages/functions/src/makeCache.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/makeCache.js) generates the cache
 - [packages/functions/src/postgraphile_library.js](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_library.js)  Postgraphile Library Lambda
 - [packages/functions/src/postgraphile_lambda.ts](https://github.com/tyrauber/sst-postgraphile/blob/main/packages/functions/src/postgraphile_lambda.ts)  Postgraphile Schema-Only Lambda
+
+## Testing
+
+A test package is provided that runs through some graphql queries - Signup, SignIn and WhoAmI:
+
+```
+pnpm test https://URL
+```
+
+ - Signup
+```
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{
+  "query": "mutation userSignup($input: SignupInput!) { signup(input: $input) { jwtToken } }",
+  "variables": {
+    "input": {
+      "email": "email@example.com",
+      "password": "password"
+    }
+  }
+}' \
+https://URL/graphql\
+-o /dev/null -s -w "Total: %{time_total}s\n"
+```
+
+ - Signin
+```
+curl -X POST   -H "Content-Type: application/json"   -d '{
+  "query": "mutation userSignin($input: SigninInput!) { signin(input: $input) { jwtToken } }",
+  "variables": {
+    "input": {
+      "email": "email@example.com",
+      "password": "password"
+    }
+  }
+}' \
+https://URL/graphql \
+-o /dev/null -s -w "Total: %{time_total}s\n"
+```
+
+ - Me
+```
+curl -X POST \
+-H "Content-Type: application/json" \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoibWVtYmVyIiwidXNlcl9pZCI6ImY2MWMxYjg0LTIxODctMTFlZS1iMzRmLTdiMWM2MjhhZDE0OSIsImlhdCI6MTY4OTI2MTQ1OSwiZXhwIjoxNjg5MzQ3ODU5LCJhdWQiOiJwb3N0Z3JhcGhpbGUiLCJpc3MiOiJwb3N0Z3JhcGhpbGUifQ.HppqWBBrDgRGWsaMwk-P1oH1kjA91FxbaNqtSe6nOBA'\
+ -d '{
+  "query": "query whoAmI {me {id email role}}"
+}' \
+https://URL/graphql \
+-o /dev/null -s -w "Total: %{time_total}s\n"
+```

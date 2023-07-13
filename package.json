@@ -14,11 +14,11 @@
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.4",
-    "aws-cdk-lib": "2.72.1",
+    "aws-cdk-lib": "2.84.0",
     "constructs": "10.1.156",
+    "sst": "^2.19.2",
     "dotenv": "^16.0.3",
     "esm": "^3.2.25",
-    "sst": "^2.8.23",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
@@ -26,6 +26,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "postgraphile": "^4.13.0"
+    "aws-sdk": "^2.1413.0"
   }
 }

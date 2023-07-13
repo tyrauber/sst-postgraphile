@@ -1,0 +1,12 @@
+{
+  "name": "@sst-postgraphile/test",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "npx node index.js",
+    "typecheck": "tsc -noEmit"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.1"
+  }
+}

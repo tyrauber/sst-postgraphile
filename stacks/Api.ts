@@ -1,17 +1,18 @@
-import { StackContext, Api } from "sst/constructs";
+import { use, StackContext, Api, Config } from "sst/constructs";
+import { Database } from "./Database.ts";
 
 export function API({ stack }: StackContext) {
+  const { policies } = use(Database);
   const api = new Api(stack, "api", {
     defaults: {
       function: {
+        //bind: [rds],
         environment: {
-          DATABASE_URL: process.env.DATABASE_URL,
           DEFAULT_ROLE: process.env.DEFAULT_ROLE,
           JWT_IDENTIFIER: process.env.JWT_IDENTIFIER,
           JWT_SECRET: process.env.JWT_SECRET
         },
         copyFiles: [
-          {"from": "./packages/functions/src/postgraphile.cache", "to": "packages/functions/src/postgraphile.cache"},
           {"from": "./.postgraphilerc.js", "to": "packages/functions/src/.postgraphilerc.js"},
         ],
         nodejs:{
@@ -23,19 +24,30 @@ export function API({ stack }: StackContext) {
       }
     },
     routes: {
-      "ANY /": {
-          function: {
-            handler: "packages/functions/src/postgraphile_lambda.handler",
-          }
-      },
       "ANY /{proxy+}": {
         function: {
-          handler: "packages/functions/src/postgraphile_library.handler"
+          handler: "packages/functions/src/graphql.main"
         }
       },
+      "GET /schema": {
+        function: {
+            handler: "packages/functions/src/graphql.schema"
+        }
+      },
+      "ANY /query": {
+        function: {
+          handler: "packages/functions/src/graphql.query",
+        }
+    },
+      "GET /": {
+        function: {
+          handler: "packages/functions/src/status.main",
+        }
+    },
     },
   });
+  api.attachPermissions(policies)
   stack.addOutputs({
-    ApiEndpoint: api.url,
+    ApiEndpoint: api.url
   });
 }

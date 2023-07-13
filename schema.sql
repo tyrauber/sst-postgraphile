@@ -37,6 +37,7 @@
 CREATE SCHEMA IF NOT EXISTS app;   
 SET search_path TO app, public;
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM public;
+ALTER ROLE postgres SET search_path TO app, public;
 
 -- We need the crypto!
 

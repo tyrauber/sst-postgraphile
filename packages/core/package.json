@@ -1,14 +1,20 @@
 {
   "name": "@sst-postgraphile/core",
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "test": "sst bind vitest",
     "typecheck": "tsc -noEmit"
   },
   "devDependencies": {
-    "vitest": "^0.31.0",
     "@types/node": "^20.1.7",
-    "sst": "^2.8.23"
+    "sst": "^2.8.23",
+    "vitest": "^0.31.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.363.0",
+    "graphql": "15.8.0",
+    "pg": "^8.11.0",
+    "postgraphile": "^4.13.0",
+    "postgres": "^3.3.4"
   }
 }
