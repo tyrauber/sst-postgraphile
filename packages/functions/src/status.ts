@@ -1,8 +1,9 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
-import { sql } from "@sst-postgraphile/core/database";
+import Database from "@sst-postgraphile/database/src/index";
 
 export const main = async (event: APIGatewayProxyEventV2) => {
   try{
+    const { sql } = await Database();
     const query = await sql`SELECT version() as Postgres;`;
     return {
       statusCode: 200,

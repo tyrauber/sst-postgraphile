@@ -1,4 +1,4 @@
-import { StackContext, use } from 'sst/constructs';
+import { StackContext, Script, Function, use, dependsOn } from 'sst/constructs';
 import { Token } from 'aws-cdk-lib';
 import * as AWS_RDS from "aws-cdk-lib/aws-rds";
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -60,4 +60,27 @@ export function Database({ stack, app }: StackContext) {
 
   return { rds, policies: [readSecretPolicy] };
 }
+
+export function Migrate({stack}: StackContext) {
+  dependsOn(Database)
+  const { rds, policies } = use(Database);
+  const { vpc } = use(Network);
+
+  const migrate = new Function(stack, "Migrate", {
+    vpc,
+    enableLiveDev: false,
+    handler: "packages/database/src/index.migrate",
+    copyFiles: [
+      { from: './packages/database/src/generated' }
+    ],
+    environment: {
+      RDS_SECRET_ARN: rds.secret!.secretArn
+    },
+  });
+  migrate.attachPermissions(policies)
+  new Script(stack, "AfterDeploy", {
+    onCreate: migrate,
+  });
+}
+
 

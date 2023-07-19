@@ -1,6 +1,6 @@
 import { SSTConfig } from "sst";
 import { Network } from "./stacks/Network";
-import { Database } from "./stacks/Database";
+import { Database, Migrate } from "./stacks/Database";
 import { API } from "./stacks/Api";
 
 export default {
@@ -14,6 +14,7 @@ export default {
     app
       .stack(Network)
       .stack(Database)
+      .stack(Migrate)
       .stack(API);
   }
 } satisfies SSTConfig;

@@ -1,0 +1,25 @@
+{
+  "name": "@sst-postgraphile/database",
+  "version": "0.0.0",
+  "scripts": {
+    "db:pull": "npx drizzle-kit introspect:pg",
+    "db:push": "npx drizzle-kit push:pg",
+    "db:migrate": "npx drizzle-kit generate:pg",
+    "db:migrate:new": "npx drizzle-kit generate:pg --custom",
+    "test": "npx jest",
+    "typecheck": "tsc -noEmit"
+  },
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "sst": "^2.19.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.369.0",
+    "aws-sdk": "^2.1413.0",
+    "dotenv": "^16.3.1",
+    "drizzle-kit": "^0.19.6",
+    "drizzle-orm": "^0.27.2",
+    "pg": "^8.11.1",
+    "postgres": "^3.3.5"
+  }
+}
