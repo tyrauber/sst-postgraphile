@@ -31,11 +31,10 @@ export const main = async () => {
   return { DATABASE_URL, postgres, sql, drizzle, migrate }
 }
 
-const migrate = async () => {
+export const migrate = async () => {
   const { migrate} = await main();
   await migrate();
 }
-
 
 export default main;
 
